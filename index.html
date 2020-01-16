@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat app</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Chat App</h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+            <a class="p-2 text-dark" href="#">Features</a>
+            <a class="p-2 text-dark" href="#">Enterprise</a>
+            <a class="p-2 text-dark" href="#">Support</a>
+            <a class="p-2 text-dark" href="#">Pricing</a>
+        </nav>
+        <a class="btn btn-outline-primary" href="#">Sign up</a>
+    </div>
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>Chat App</h2>
+            <p class="lead">Enter your name and start chatting</p>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <h3>Form of messages</h3>
+                <form id="messForm">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" placeholder="Enter Your Name" class="form-control">
+                    <label for="message" class="mt-4">Message</label>
+                    <textarea name="message" id="message" class="form-control"
+                        placeholder="Enter Message"></textarea><br>
+                    <input type="submit" value="Send" class="btn btn-danger">
+                </form>
+            </div>
+            <div class="col-6">
+                <h3>Message</h3>
+                <div id="all_mess"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function socket() {
+            let socket = io.connect();
+            let form = document.getElementById("messForm");
+            let name = document.getElementById("name");
+            let textarea = document.getElementById("message");
+            let all_messages = document.getElementById("all_mess");
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                socket.emit("sendMess", { message: textarea.value, name: name.value });
+                textarea.value = "";
+            });
+
+            socket.on("addMess", function (data) {
+                let div = document.createElement("div");
+                div.textContent = data.name + " : " + data.message;
+                all_messages.append(div);
+            });
+        }
+        socket();
+    </script>
+</body>
+
+</html>
